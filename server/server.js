@@ -130,13 +130,6 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-app.get('/users', (req, res) => {
-  res.json([{
-    id: 1,
-    username: 'wonipan'
-  }]);
-});
-
 app.get('/');
 
 console.log('Listening on 8888');

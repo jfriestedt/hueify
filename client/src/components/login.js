@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 
 const LoginPrompt = ({ loggedIn }) => {
     return loggedIn
-             ? <p>Ya logged in</p>
-             : <a href='/login' referrerPolicy='unsafe-url'>Y'ain't logged in</a>
+      ? <h3>Login Success</h3>
+      : <a className='button' href='/login'>Log in to Spotify</a>
 }
 
 const mapStateToProps = (state) => {
