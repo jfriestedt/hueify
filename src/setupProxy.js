@@ -3,15 +3,7 @@ module.exports = function (app) {
   app.use(
     '/login',
     proxy({
-      target: 'http://localhost:8888',
-      changeOrigin: true,
-    })
-  );
-
-  app.use(
-    '/users',
-    proxy({
-      target: 'http://localhost:8888',
+      target: 'http://localhost:3001',
       changeOrigin: true,
     })
   );
