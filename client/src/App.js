@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
+import { connect } from 'react-redux';
+
+import Login from './components/login'
 
 class App extends Component {
   state = {users: []}
@@ -10,9 +13,10 @@ class App extends Component {
       .then(users => this.setState({ users }));
   }
 
-  render() {
+  render () {
     return (
       <div className="App">
+        <Login />
         <h1>Users</h1>
         {this.state.users.map(user =>
           <div key={user.id}>{user.username}</div>
@@ -22,4 +26,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default connect()(App);

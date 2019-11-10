@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
-import simpleReducer from './simpleReducer';
+import tokens from './tokens';
+
 export default combineReducers({
-  simpleReducer
+  tokens
 });
