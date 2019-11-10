@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-const Login = ({ loggedIn }) => {
+const LoginPrompt = ({ loggedIn }) => {
     return loggedIn
-             ? <div>Ya logged in</div>
-             : <div>Y'ain't logged in</div>
+             ? <p>Ya logged in</p>
+             : <a href='/login' referrerPolicy='unsafe-url'>Y'ain't logged in</a>
 }
 
 const mapStateToProps = (state) => {
@@ -12,4 +12,4 @@ const mapStateToProps = (state) => {
   return { loggedIn: !!(tokens.accessToken && tokens.refreshToken) }
 }
 
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps)(LoginPrompt);

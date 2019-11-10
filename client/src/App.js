@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import './App.css';
 import { connect } from 'react-redux';
 
-import Login from './components/login'
+import LoginPrompt from './components/login'
 
 class App extends Component {
   state = {users: []}
 
   componentDidMount() {
+
     fetch('/users')
       .then(res => res.json())
       .then(users => this.setState({ users }));
@@ -16,7 +16,7 @@ class App extends Component {
   render () {
     return (
       <div className="App">
-        <Login />
+        <LoginPrompt />
         <h1>Users</h1>
         {this.state.users.map(user =>
           <div key={user.id}>{user.username}</div>

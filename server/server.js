@@ -4,10 +4,18 @@ const request = require('request'); // "Request" library
 const cors = require('cors');
 const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 
 const client_id = process.env.SPOTIFY_CLIENT_ID; // Your client id
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Your secret
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URI; // Your redirect uri
+
+const app = express();
+
+app.use(express.static(__dirname + '/public'))
+  .use(cors())
+  .use(cookieParser())
+  .use(morgan('combined'));
 
 /**
  * Generates a random string containing numbers and letters
@@ -27,14 +35,7 @@ const generateRandomString = function(length) {
 
 const stateKey = 'spotify_auth_state';
 
-const app = express();
-
-app.use(express.static(__dirname + '/public'))
-   .use(cors())
-   .use(cookieParser());
-
 app.get('/login', function(req, res) {
-
   const state = generateRandomString(16);
   res.cookie(stateKey, state);
 
@@ -87,13 +88,13 @@ app.get('/callback', function(req, res) {
               refresh_token = body.refresh_token;
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('/listen' +
+        res.redirect('http://localhost:3000?' +
           querystring.stringify({
             access_token: access_token,
             refresh_token: refresh_token
           }));
       } else {
-        res.redirect('/#' +
+        res.redirect('http://localhost:3000?' +
           querystring.stringify({
             error: 'invalid_token'
           }));
