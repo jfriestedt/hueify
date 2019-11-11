@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import registerTokens from './actions/tokens'
 
 import LoginPrompt from './components/login'
+import Player from './components/player'
 
 class App extends Component {
   constructor () {
@@ -16,6 +17,10 @@ class App extends Component {
       height: '100%',
       position: 'absolute'
     }
+
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      this.props.dispatch({ type: 'SPOTIFY_PLAYER_STATUS', status: 'READY' });
+    };
   }
 
   componentDidMount () {
@@ -34,6 +39,7 @@ class App extends Component {
     return (
       <div className="App" style={this.appStyle}>
         <LoginPrompt />
+        <Player />
       </div>
     );
   }
