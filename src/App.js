@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Helmet } from 'react-helmet';
 
 import registerTokens from './actions/tokens'
 
 import LoginPrompt from './components/login'
-import Player from './components/player'
+import PlayerInterface from './components/player_interface'
+import AlbumArt from './components/album_art'
 
 class App extends Component {
   constructor () {
     super();
     this.appStyle = {
       display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       width: '100%',
@@ -19,18 +22,16 @@ class App extends Component {
     }
 
     window.onSpotifyWebPlaybackSDKReady = () => {
-      this.props.dispatch({ type: 'SPOTIFY_PLAYER_STATUS', status: 'READY' });
+      this.props.dispatch({ type: 'SPOTIFY_PLAYER_MOUNT_READY' });
     };
   }
 
   componentDidMount () {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('access_token') && urlParams.has('refresh_token')) {
-
-      this.props.dispatch(registerTokens({
-        accessToken: urlParams.get('access_token'),
-        refreshToken: urlParams.get('refresh_token')
-      }))
+    const urlParams = new URLSearchParams(window.location.search),
+          accessToken = urlParams.get('access_token'),
+          refreshToken = urlParams.get('refresh_token');
+    if (accessToken && refreshToken) {
+      this.props.dispatch(registerTokens({ accessToken, refreshToken }))
     }
   }
 
@@ -38,8 +39,13 @@ class App extends Component {
   render () {
     return (
       <div className="App" style={this.appStyle}>
+        <Helmet>
+          <script src="https://sdk.scdn.co/spotify-player.js"></script>
+        </Helmet>
+
         <LoginPrompt />
-        <Player />
+        <PlayerInterface />
+        <AlbumArt />
       </div>
     );
   }

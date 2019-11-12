@@ -1,18 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-class Player extends Component {
+class PlayerInterface extends Component {
   constructor () {
     super();
-    this.state = { deviceId: null }
-  }
-
-  shouldComponentUpdate (nextProps, nextState) {
-    return (
-      nextProps.spotifyPlayerReady !== this.props.spotifyPlayerReady ||
-      nextProps.accessToken !== this.props.accessToken ||
-      nextState.deviceId !== this.state.deviceId
-    )
+    this.state = { deviceId: null } // TODO JF: cut deviceId POC stuff
   }
 
   mountPlayer () {
@@ -39,14 +31,18 @@ class Player extends Component {
     });
 
     // Playback status updates
-    player.addListener('player_state_changed', state => {
-      console.log(state);
+    player.addListener('player_state_changed', (state) => {
+      console.log(this.props.dispatch({
+        type: 'SPOTIFY_PLAYER_STATE_CHANGED',
+        state
+      }));
     });
 
     // Ready
     player.addListener('ready', ({ device_id }) => {
       this.setState({ deviceId: device_id });
       console.log('Ready with Device ID', device_id);
+      this.props.dispatch({ type: 'SPOTIFY_PLAYER_MOUNTED' })
     });
 
     // Not Ready
@@ -56,33 +52,34 @@ class Player extends Component {
 
     // Connect to the player!
     player.connect();
-    this.props.dispatch({ type: 'SPOTIFY_PLAYER_STATUS', status: 'MOUNTED' })
   }
 
   componentDidUpdate () {
     if (
       this.props.accessToken &&
-      this.props.spotifyPlayerReady &&
-      !this.props.spotifyPlayerMounted
+      this.props.spotifyPlayerMountReady
     ) {
       this.mountPlayer();
     }
   }
 
   render () {
-    debugger
     return this.props.spotifyPlayerMounted ?
       <div>Device ID: {this.state.deviceId}</div> :
       null
   }
 }
 
-const mapStateToProps = ({ tokens: { accessToken }, spotifyPlayerStatus }) => {
+const mapStateToProps = ({
+  tokens: { accessToken },
+  spotifyPlayerMountStatus,
+  spotifyPlayerState
+ }) => {
   return {
     accessToken,
-    spotifyPlayerReady: spotifyPlayerStatus === 'READY',
-    spotifyPlayerMounted: spotifyPlayerStatus === 'MOUNTED'
+    spotifyPlayerMountReady: spotifyPlayerMountStatus === 'SPOTIFY_PLAYER_MOUNT_READY',
+    spotifyPlayerMounted: spotifyPlayerMountStatus === 'SPOTIFY_PLAYER_MOUNTED',
   }
 }
 
-export default connect(mapStateToProps)(Player);
+export default connect(mapStateToProps)(PlayerInterface);
