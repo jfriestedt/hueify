@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Helmet } from 'react-helmet';
+import './App.sass'
 
-import registerTokens from './actions/tokens'
-
+import AlbumArt from './components/album_art'
+import ColorExtractor from './components/color_extractor'
 import LoginPrompt from './components/login'
 import PlayerInterface from './components/player_interface'
-import AlbumArt from './components/album_art'
+import TrackInfo from './components/track_info'
 
 class App extends Component {
   constructor () {
@@ -20,32 +20,16 @@ class App extends Component {
       height: '100%',
       position: 'absolute'
     }
-
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      this.props.dispatch({ type: 'SPOTIFY_PLAYER_MOUNT_READY' });
-    };
   }
-
-  componentDidMount () {
-    const urlParams = new URLSearchParams(window.location.search),
-          accessToken = urlParams.get('access_token'),
-          refreshToken = urlParams.get('refresh_token');
-    if (accessToken && refreshToken) {
-      this.props.dispatch(registerTokens({ accessToken, refreshToken }))
-    }
-  }
-
 
   render () {
     return (
       <div className="App" style={this.appStyle}>
-        <Helmet>
-          <script src="https://sdk.scdn.co/spotify-player.js"></script>
-        </Helmet>
-
         <LoginPrompt />
-        <PlayerInterface />
+        <TrackInfo />
+        <ColorExtractor />
         <AlbumArt />
+        <PlayerInterface />
       </div>
     );
   }

@@ -1,19 +1,23 @@
 import React, { Component } from 'react';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
+import { isEmpty } from 'lodash';
+import registerTokens from '../actions/tokens';
 
 class PlayerInterface extends Component {
   constructor () {
     super();
     this.state = { deviceId: null } // TODO JF: cut deviceId POC stuff
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      this.props.dispatch({ type: 'SPOTIFY_PLAYER_MOUNT_READY' });
+    };
   }
 
   mountPlayer () {
     const Spotify = window.Spotify;
     const player = new Spotify.Player({
       name: '_*_HUEIFY_*_',
-      getOAuthToken: cb => {
-        cb(this.props.accessToken);
-      }
+      getOAuthToken: (cb) => { cb(this.props.accessToken); }
     });
 
     // Error handling
@@ -54,6 +58,18 @@ class PlayerInterface extends Component {
     player.connect();
   }
 
+  componentDidMount() {
+    const urlParams = new URLSearchParams(window.location.search),
+          accessToken = urlParams.get('access_token'),
+          refreshToken = urlParams.get('refresh_token');
+    if (accessToken && refreshToken) {
+      this.props.dispatch(registerTokens({
+        accessToken,
+        refreshToken
+      }))
+    }
+  }
+
   componentDidUpdate () {
     if (
       this.props.accessToken &&
@@ -63,10 +79,31 @@ class PlayerInterface extends Component {
     }
   }
 
-  render () {
-    return this.props.spotifyPlayerMounted ?
-      <div>Device ID: {this.state.deviceId}</div> :
+  renderConnectPrompt () {
+    return isEmpty(this.props.spotifyPlayerState) ?
+      <div>
+        <h4>Connect to device:</h4>
+        <h4><strong>_*_HUEIFY_*_</strong></h4>
+      </div> :
       null
+  }
+
+  renderDeviceInfo () {
+    return this.props.spotifyPlayerMounted ?
+      <div>
+        {this.renderConnectPrompt()}
+        <p>{this.state.deviceId}</p>
+      </div> :
+      null
+  }
+
+  render () {
+    return <div>
+      <Helmet>
+        <script src="https://sdk.scdn.co/spotify-player.js"></script>
+      </Helmet>
+      {this.renderDeviceInfo()}
+    </div>
   }
 }
 
@@ -77,6 +114,7 @@ const mapStateToProps = ({
  }) => {
   return {
     accessToken,
+    spotifyPlayerState,
     spotifyPlayerMountReady: spotifyPlayerMountStatus === 'SPOTIFY_PLAYER_MOUNT_READY',
     spotifyPlayerMounted: spotifyPlayerMountStatus === 'SPOTIFY_PLAYER_MOUNTED',
   }

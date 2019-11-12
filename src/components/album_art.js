@@ -4,7 +4,14 @@ import { chain } from 'lodash';
 
 const AlbumArt = ({ albumArtUrl }) => {
   return albumArtUrl ?
-    <img alt='album art' src={albumArtUrl} /> :
+    <img alt='album art'
+         src={albumArtUrl}
+         height='300'
+         width='300'
+         decoding='sync'
+         style={{ height: '300px',
+                  width: '300px',
+                  marginBottom: '20px' }} /> :
     null
 }
 
