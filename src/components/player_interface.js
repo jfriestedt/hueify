@@ -15,19 +15,17 @@ class PlayerInterface extends Component {
     };
   }
 
-  mountPlayer (initialAccessToken) {
+  mountPlayer () {
     this.setState({ mounting: true })
 
     const player = new window.Spotify.Player({
       name: '_*_HUEIFY_*_',
-      getOAuthToken: async (cb) => {
-        const accessToken = initialAccessToken ?
-          initialAccessToken :
-          await fetch(
-            '/refresh_token?refresh_token= ' + this.props.refreshToken
-          ).access_token
-
-        return cb(accessToken);
+      getOAuthToken: (cb) => {
+        const refreshTokenUrl =
+          `/refresh_token?refresh_token=${this.props.refreshToken}`
+        fetch(refreshTokenUrl)
+          .then((response) => response.json())
+          .then(({ access_token }) => cb(access_token))
       }
     });
 
@@ -70,27 +68,26 @@ class PlayerInterface extends Component {
 
   componentDidMount() {
     const urlParams = new URLSearchParams(window.location.search),
-          accessToken = urlParams.get('access_token'),
           refreshToken = urlParams.get('refresh_token');
-    if (accessToken && refreshToken) {
-      this.props.dispatch(registerTokens({ accessToken, refreshToken }))
+    if (refreshToken) {
+      this.props.dispatch(registerTokens({ refreshToken }))
     }
   }
 
   componentDidUpdate (prevProps, prevState) {
     if (
-      this.props.accessToken &&
+      this.props.refreshToken &&
       this.props.spotifyPlayerMountReady &&
       !this.state.mounting
     ) {
       console.log('mounting player')
-      this.mountPlayer(this.props.accessToken);
+      this.mountPlayer();
     }
   }
 
   renderDeviceInfoLoading () {
     const loading = (
-      this.props.accessToken &&
+      this.props.refreshToken &&
       this.props.spotifyPlayerMountReady &&
       !this.props.spotifyPlayerMounted
     )
@@ -138,12 +135,12 @@ class PlayerInterface extends Component {
 }
 
 const mapStateToProps = ({
-  tokens: { accessToken },
+  tokens: { refreshToken },
   spotifyPlayerMountStatus,
   spotifyPlayerState
  }) => {
   return {
-    accessToken,
+    refreshToken,
     spotifyPlayerState,
     spotifyPlayerMountReady: spotifyPlayerMountStatus === 'SPOTIFY_PLAYER_MOUNT_READY',
     spotifyPlayerMounted: spotifyPlayerMountStatus === 'SPOTIFY_PLAYER_MOUNTED',

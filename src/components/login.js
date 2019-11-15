@@ -8,8 +8,8 @@ const LoginPrompt = ({ loggedIn }) => {
 }
 
 const mapStateToProps = (state) => {
-  const { tokens } = state
-  return { loggedIn: !!(tokens.accessToken && tokens.refreshToken) }
+  const { tokens: { refreshToken } } = state
+  return { loggedIn: !!refreshToken }
 }
 
 export default connect(mapStateToProps)(LoginPrompt);
