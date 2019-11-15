@@ -2,22 +2,33 @@ import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
+import { CSSTransition } from 'react-transition-group';
 import registerTokens from '../actions/tokens';
+import '../App.scss'
 
 class PlayerInterface extends Component {
   constructor () {
     super();
-    this.state = { deviceId: null } // TODO JF: cut deviceId POC stuff
+    this.state = { mounting: false }
     window.onSpotifyWebPlaybackSDKReady = () => {
       this.props.dispatch({ type: 'SPOTIFY_PLAYER_MOUNT_READY' });
     };
   }
 
-  mountPlayer () {
-    const Spotify = window.Spotify;
-    const player = new Spotify.Player({
+  mountPlayer (initialAccessToken) {
+    this.setState({ mounting: true })
+
+    const player = new window.Spotify.Player({
       name: '_*_HUEIFY_*_',
-      getOAuthToken: (cb) => { cb(this.props.accessToken); }
+      getOAuthToken: async (cb) => {
+        const accessToken = initialAccessToken ?
+          initialAccessToken :
+          await fetch(
+            '/refresh_token?refresh_token= ' + this.props.refreshToken
+          ).access_token
+
+        return cb(accessToken);
+      }
     });
 
     // Error handling
@@ -36,17 +47,16 @@ class PlayerInterface extends Component {
 
     // Playback status updates
     player.addListener('player_state_changed', (state) => {
-      console.log(this.props.dispatch({
-        type: 'SPOTIFY_PLAYER_STATE_CHANGED',
-        state
-      }));
+      this.props.dispatch({ type: 'SPOTIFY_PLAYER_STATE_CHANGED', state });
     });
 
     // Ready
+    console.log('player exists: ' + !!player)
+    console.log('adding ready listener')
     player.addListener('ready', ({ device_id }) => {
-      this.setState({ deviceId: device_id });
       console.log('Ready with Device ID', device_id);
       this.props.dispatch({ type: 'SPOTIFY_PLAYER_MOUNTED' })
+      this.setState({ mounting: false })
     });
 
     // Not Ready
@@ -63,20 +73,37 @@ class PlayerInterface extends Component {
           accessToken = urlParams.get('access_token'),
           refreshToken = urlParams.get('refresh_token');
     if (accessToken && refreshToken) {
-      this.props.dispatch(registerTokens({
-        accessToken,
-        refreshToken
-      }))
+      this.props.dispatch(registerTokens({ accessToken, refreshToken }))
     }
   }
 
-  componentDidUpdate () {
+  componentDidUpdate (prevProps, prevState) {
     if (
       this.props.accessToken &&
-      this.props.spotifyPlayerMountReady
+      this.props.spotifyPlayerMountReady &&
+      !this.state.mounting
     ) {
-      this.mountPlayer();
+      console.log('mounting player')
+      this.mountPlayer(this.props.accessToken);
     }
+  }
+
+  renderDeviceInfoLoading () {
+    const loading = (
+      this.props.accessToken &&
+      this.props.spotifyPlayerMountReady &&
+      !this.props.spotifyPlayerMounted
+    )
+    return <CSSTransition in={loading}
+                          exit={false}
+                          timeout={200}
+                          classNames='device-info'
+                          unmountOnExit >
+      <div>
+        <h4>Connecting to Spotify</h4>
+        <h6>This could take a minute...</h6>
+      </div>
+    </CSSTransition>
   }
 
   renderConnectPrompt () {
@@ -89,12 +116,14 @@ class PlayerInterface extends Component {
   }
 
   renderDeviceInfo () {
-    return this.props.spotifyPlayerMounted ?
-      <div>
-        {this.renderConnectPrompt()}
-        <p>{this.state.deviceId}</p>
-      </div> :
-      null
+    return <CSSTransition in={this.props.spotifyPlayerMounted}
+                          timeout={200}
+                          classNames='device-info'
+                          unmountOnExit >
+        <div>
+          {this.renderConnectPrompt()}
+        </div>
+      </CSSTransition>
   }
 
   render () {
@@ -102,6 +131,7 @@ class PlayerInterface extends Component {
       <Helmet>
         <script src="https://sdk.scdn.co/spotify-player.js"></script>
       </Helmet>
+      {this.renderDeviceInfoLoading()}
       {this.renderDeviceInfo()}
     </div>
   }

@@ -15,16 +15,30 @@ class ColorExtractor extends Component {
     }
   }
 
-  shouldComponentUpdate ({ albumArtUrl }, { palette }) {
+  getPaletteId (palette) {
+    return keys(palette).map((swatchKey) => {
+      return palette[swatchKey].getHex()
+    })
+    .sort()
+    .join('_')
+  }
+
+  shouldComponentUpdate (
+    { albumArtUrl: nextAlbumArtUrl },
+    { palette: nextPalette }
+  ) {
     return (
-      this.props.albumArtUrl !== albumArtUrl ||
-      (isEmpty(this.state.palette) && !isEmpty(palette))
+      nextAlbumArtUrl !== this.props.albumArtUrl ||
+      (this.getPaletteId(nextPalette) !== this.getPaletteId(this.state.palette))
     )
   }
 
-  componentDidUpdate () {
-    if (this.props.albumArtUrl) {
-      Vibrant.from(this.props.albumArtUrl)
+  componentDidUpdate ({ albumArtUrl: prevAlbumArtUrl }) {
+    if (prevAlbumArtUrl !== this.props.albumArtUrl) {
+      window.vib = Vibrant.from(this.props.albumArtUrl)
+
+      window.vib
+        .clearFilters()
         .getPalette((err, palette) => {
           this.setState({ palette })
         });
@@ -54,7 +68,7 @@ class ColorExtractor extends Component {
 const mapStateToProps = ({ spotifyPlayerState }) => {
   const image = chain(spotifyPlayerState)
     .get(['track_window', 'current_track', 'album', 'images'])
-    .find({ height: 300 })
+    .find({ height: 64 })
     .value();
 
   return {

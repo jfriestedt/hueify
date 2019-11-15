@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import './App.sass'
+import './App.scss'
 
 import AlbumArt from './components/album_art'
 import ColorExtractor from './components/color_extractor'
