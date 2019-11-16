@@ -10,6 +10,7 @@ const morgan = require('morgan');
 const client_id = process.env.REACT_APP_SPOTIFY_CLIENT_ID; // Your client id
 const client_secret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET; // Your secret
 const redirect_uri = process.env.REACT_APP_SPOTIFY_REDIRECT_URI; // Your redirect uri
+const PORT = process.env.PORT || 3000
 
 const app = express();
 
@@ -132,5 +133,5 @@ app.get('/refresh_token', function(req, res) {
 
 app.get('/');
 
-console.log('Listening on 3001');
-app.listen(3001);
+console.log(`Listening on ${PORT}`);
+app.listen(PORT);
