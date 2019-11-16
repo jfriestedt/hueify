@@ -28,8 +28,8 @@
   },
   "scripts": {
     "start-client": "PORT=8000 react-scripts start",
-    "start-server": "node server/server",
-    "start": "run-p start-server start-client",
+    "start": "node server/server",
+    "dev": "run-p start start-client",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

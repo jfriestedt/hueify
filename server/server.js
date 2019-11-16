@@ -6,6 +6,7 @@ const cors = require('cors');
 const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
+const path = require('path')
 
 const client_id = process.env.REACT_APP_SPOTIFY_CLIENT_ID; // Your client id
 const client_secret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET; // Your secret
@@ -14,10 +15,14 @@ const PORT = process.env.PORT || 3000
 
 const app = express();
 
-app.use(express.static(__dirname + '/public'))
-  .use(cors())
+app.use(express.static(path.join(__dirname + '../public')))
   .use(cookieParser())
-  .use(morgan('combined'));
+  .use(morgan('combined'))
+  .use(express.static(path.join(__dirname, '../build')));
+
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, '../build', 'index.html'));
+});
 
 /**
  * Generates a random string containing numbers and letters
