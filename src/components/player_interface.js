@@ -9,6 +9,7 @@ import '../App.scss'
 class PlayerInterface extends Component {
   constructor () {
     super();
+
     this.state = { mounting: false }
     window.onSpotifyWebPlaybackSDKReady = () => {
       this.props.dispatch({ type: 'SPOTIFY_PLAYER_MOUNT_READY' });
