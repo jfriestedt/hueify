@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+const dotenv = require('dotenv').config()
 const express = require('express'); // Express web server framework
 const request = require('request'); // "Request" library
 const cors = require('cors');
@@ -6,11 +7,12 @@ const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 
-const client_id = process.env.SPOTIFY_CLIENT_ID; // Your client id
-const client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Your secret
-const redirect_uri = process.env.SPOTIFY_REDIRECT_URI; // Your redirect uri
+const client_id = process.env.REACT_APP_SPOTIFY_CLIENT_ID; // Your client id
+const client_secret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET; // Your secret
+const redirect_uri = process.env.REACT_APP_SPOTIFY_REDIRECT_URI; // Your redirect uri
 
 const app = express();
+const PORT = process.env.PORT || 3001;
 
 app.use(express.static(__dirname + '/public'))
   .use(cors())
@@ -129,5 +131,5 @@ app.get('/refresh_token', function(req, res) {
 
 app.get('/');
 
-console.log('Listening on 3001');
-app.listen(3001);
+console.log(`Listening on ${PORT}`);
+app.listen(PORT);

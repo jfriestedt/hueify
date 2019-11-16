@@ -27,12 +27,12 @@
     "request": "~2.83.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "react-start": "react-scripts start",
+    "server": "node server/server",
+    "start": "run-p server react-start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "server": "envdir ~/dev/hueifyv2env node server/server",
-    "dev": "run-p server start"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

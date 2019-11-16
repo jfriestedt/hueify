@@ -20,12 +20,11 @@ const generateRandomString = function (length) {
 
 const stateKey = 'spotify_auth_state';
 
-const clientId = process.env.SPOTIFY_CLIENT_ID; // Your client id
-const clientSecret = process.env.SPOTIFY_CLIENT_SECRET; // Your secret
-const redirectUri = process.env.SPOTIFY_REDIRECT_URI; // Your redirect uri
+const clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID; // Your client id
+const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET; // Your secret
+const redirectUri = process.env.REACT_APP_SPOTIFY_REDIRECT_URI; // Your redirect uri
 
 app.get('/login', function (req, res) {
-
   const state = generateRandomString(16);
   res.cookie(stateKey, state);
 
@@ -94,7 +93,6 @@ app.get('/callback', function (req, res) {
 });
 
 app.get('/refresh_token', function (req, res) {
-
   // requesting access token from refresh token
   const refreshToken = req.query.refresh_token;
   const authOptions = {
