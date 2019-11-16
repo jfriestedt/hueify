@@ -9,7 +9,7 @@ import '../App.scss'
 class PlayerInterface extends Component {
   constructor () {
     super();
-    this.state = { mounting: false }
+    this.state = { mounting: false, error: null }
     window.onSpotifyWebPlaybackSDKReady = () => {
       this.props.dispatch({ type: 'SPOTIFY_PLAYER_MOUNT_READY' });
     };
@@ -32,15 +32,19 @@ class PlayerInterface extends Component {
     // Error handling
     player.addListener('initialization_error', ({ message }) => {
       console.error(message);
+      this.setState({ error: message });
     });
     player.addListener('authentication_error', ({ message }) => {
       console.error(message);
+      this.setState({ error: message });
     });
     player.addListener('account_error', ({ message }) => {
       console.error(message);
+      this.setState({ error: message });
     });
     player.addListener('playback_error', ({ message }) => {
       console.error(message);
+      this.setState({ error: message });
     });
 
     // Playback status updates
@@ -128,6 +132,7 @@ class PlayerInterface extends Component {
       <Helmet>
         <script src="https://sdk.scdn.co/spotify-player.js"></script>
       </Helmet>
+      <div style={{ color: 'red' }}>{this.state.error}</div>
       {this.renderDeviceInfoLoading()}
       {this.renderDeviceInfo()}
     </div>
