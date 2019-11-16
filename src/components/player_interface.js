@@ -30,21 +30,21 @@ class PlayerInterface extends Component {
     });
 
     // Error handling
-    player.addListener('initialization_error', ({ message }) => {
-      console.error(message);
-      this.setState({ error: message });
+    player.addListener('initialization_error', (e) => {
+      console.error(e.message);
+      this.setState({ error: JSON.stringify(e) });
     });
-    player.addListener('authentication_error', ({ message }) => {
-      console.error(message);
-      this.setState({ error: message });
+    player.addListener('authentication_error', (e) => {
+      console.error(e.message);
+      this.setState({ error: JSON.stringify(e) });
     });
-    player.addListener('account_error', ({ message }) => {
-      console.error(message);
-      this.setState({ error: message });
+    player.addListener('account_error', (e) => {
+      console.error(e.message);
+      this.setState({ error: JSON.stringify(e) });
     });
-    player.addListener('playback_error', ({ message }) => {
-      console.error(message);
-      this.setState({ error: message });
+    player.addListener('playback_error', (e) => {
+      console.error(e.message);
+      this.setState({ error: JSON.stringify(e) });
     });
 
     // Playback status updates
