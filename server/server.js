@@ -12,7 +12,6 @@ const client_secret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET; // Your secre
 const redirect_uri = process.env.REACT_APP_SPOTIFY_REDIRECT_URI; // Your redirect uri
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 app.use(express.static(__dirname + '/public'))
   .use(cors())
@@ -36,8 +35,11 @@ const generateRandomString = function(length) {
 };
 
 const stateKey = 'spotify_auth_state';
+let referer;
 
 app.get('/login', function(req, res) {
+  referer = req.headers.referer
+
   const state = generateRandomString(16);
   res.cookie(stateKey, state);
 
@@ -54,7 +56,6 @@ app.get('/login', function(req, res) {
 });
 
 app.get('/callback', function(req, res) {
-
   // your application requests refresh and access tokens
   // after checking the state parameter
 
@@ -90,13 +91,13 @@ app.get('/callback', function(req, res) {
               refresh_token = body.refresh_token;
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('http://localhost:3000?' +
-          querystring.stringify({ refresh_token }));
+        res.redirect(`${referer}?` + querystring.stringify({
+          refresh_token
+        }));
       } else {
-        res.redirect('http://localhost:3000?' +
-          querystring.stringify({
-            error: 'invalid_token'
-          }));
+        res.redirect(`${referer}?` + querystring.stringify({
+          error: 'invalid_token'
+        }));
       }
     });
   }
@@ -131,5 +132,5 @@ app.get('/refresh_token', function(req, res) {
 
 app.get('/');
 
-console.log(`Listening on ${PORT}`);
-app.listen(PORT);
+console.log('Listening on 3001');
+app.listen(3001);

@@ -4,7 +4,7 @@ module.exports = (app) => {
   app.use(
     '/login',
     proxy({
-      target: 'http://localhost:3001',
+      target: `${process.env.REACT_APP_HOST}:3001`,
       changeOrigin: true,
     })
   );
@@ -12,7 +12,7 @@ module.exports = (app) => {
   app.use(
     '/refresh_token',
     proxy({
-      target: 'http://localhost:3001',
+      target: `${process.env.REACT_APP_HOST}:3001`,
       changeOrigin: true
     })
   );
