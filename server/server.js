@@ -36,10 +36,8 @@ const generateRandomString = function(length) {
 };
 
 const stateKey = 'spotify_auth_state';
-let referer;
 
 app.get('/login', function(req, res) {
-  referer = req.headers.referer
 
   const state = generateRandomString(16);
   res.cookie(stateKey, state);
@@ -88,15 +86,14 @@ app.get('/callback', function(req, res) {
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
 
-        const access_token = body.access_token,
-              refresh_token = body.refresh_token;
+        const { refresh_token } = body;
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect(`${referer}?` + querystring.stringify({
+        res.redirect(`${req.headers.referer}?` + querystring.stringify({
           refresh_token
         }));
       } else {
-        res.redirect(`${referer}?` + querystring.stringify({
+        res.redirect(`${req.headers.referer}?` + querystring.stringify({
           error: 'invalid_token'
         }));
       }
