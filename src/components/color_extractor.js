@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { assign, chain, isEmpty, keys } from 'lodash'
+import { assign, chain, keys } from 'lodash'
 import * as Vibrant from 'node-vibrant'
 
 class ColorExtractor extends Component {
@@ -35,13 +35,13 @@ class ColorExtractor extends Component {
 
   componentDidUpdate ({ albumArtUrl: prevAlbumArtUrl }) {
     if (prevAlbumArtUrl !== this.props.albumArtUrl) {
-      window.vib = Vibrant.from(this.props.albumArtUrl)
+      const vib = new Vibrant(this.props.albumArtUrl, {
+        filters: []
+      });
 
-      window.vib
-        .clearFilters()
-        .getPalette((err, palette) => {
-          this.setState({ palette })
-        });
+      vib.getPalette((err, palette) => {
+        this.setState({ palette });
+      });
     }
   }
 
