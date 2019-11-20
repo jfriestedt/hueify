@@ -10,7 +10,7 @@ class PlayerInterface extends Component {
   constructor () {
     super();
 
-    this.state = { mounting: false }
+    this.state = { mounting: false, error: null }
     window.onSpotifyWebPlaybackSDKReady = () => {
       this.props.dispatch({ type: 'SPOTIFY_PLAYER_MOUNT_READY' });
     };
@@ -32,15 +32,19 @@ class PlayerInterface extends Component {
 
     // Error handling
     player.addListener('initialization_error', ({ message }) => {
+      this.setState({ error: message })
       console.error(message);
     });
     player.addListener('authentication_error', ({ message }) => {
+      this.setState({ error: message })
       console.error(message);
     });
     player.addListener('account_error', ({ message }) => {
+      this.setState({ error: message })
       console.error(message);
     });
     player.addListener('playback_error', ({ message }) => {
+      this.setState({ error: message })
       console.error(message);
     });
 
@@ -87,21 +91,26 @@ class PlayerInterface extends Component {
   }
 
   renderDeviceInfoLoading () {
-    const loading = (
-      this.props.refreshToken &&
-      this.props.spotifyPlayerMountReady &&
-      !this.props.spotifyPlayerMounted
-    )
-    return <CSSTransition in={loading}
-                          exit={false}
-                          timeout={200}
-                          classNames='device-info'
-                          unmountOnExit >
-      <div>
-        <h4>Connecting to Spotify</h4>
-        <h6>This could take a minute...</h6>
-      </div>
-    </CSSTransition>
+    if (this.state.error) {
+      return <h4 className='error'>{this.state.error}</h4>
+    } else {
+      const loading = (
+        this.props.refreshToken &&
+        this.props.spotifyPlayerMountReady &&
+        !this.props.spotifyPlayerMounted
+      )
+      return <CSSTransition in={loading}
+                            exit={false}
+                            timeout={200}
+                            classNames='device-info'
+                            unmountOnExit >
+        <div>
+          <h4>Connecting to Spotify</h4>
+          <h6>This could take a minute...</h6>
+        </div>
+      </CSSTransition>
+    }
+
   }
 
   renderConnectPrompt () {

@@ -8,6 +8,7 @@ import AlbumArt from './components/album_art'
 import ColorExtractor from './components/color_extractor'
 import LoginPrompt from './components/login'
 import PlayerInterface from './components/player_interface'
+import HueInterface from './components/hue_interface'
 import TrackInfo from './components/track_info'
 
 class App extends Component {
@@ -34,9 +35,10 @@ class App extends Component {
         <ColorExtractor />
         <AlbumArt />
         <PlayerInterface />
+        <HueInterface />
       </div> :
       <div className="App" style={this.appStyle}>
-        <h4 style={{ color: 'red' }}>
+        <h4 className='error'>
           Sorry homie, Hueify only works on Desktop browsers. :'(
         </h4>
       </div>
