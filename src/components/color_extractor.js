@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { assign, chain, keys } from 'lodash'
+import { assign, assignIn, chain, keys, sum } from 'lodash'
 import * as Vibrant from 'node-vibrant'
 
 class ColorExtractor extends Component {
@@ -14,12 +14,12 @@ class ColorExtractor extends Component {
     }
   }
 
-  getPaletteId (palette) {
-    return keys(palette).map((swatchKey) => {
-      return palette[swatchKey].getHex()
-    })
-    .sort()
-    .join('_')
+  getPaletteID (palette) {
+    return chain(palette)
+      .map((swatch) => swatch.getHex())
+      .sort()
+      .join('_')
+      .value();
   }
 
   shouldComponentUpdate ({
@@ -28,8 +28,18 @@ class ColorExtractor extends Component {
   }) {
     return (
       nextAlbumArtUrl !== this.props.albumArtUrl ||
-      (this.getPaletteId(nextPalette) !== this.getPaletteId(this.props.palette))
+      (this.getPaletteID(nextPalette) !== this.getPaletteID(this.props.palette))
     )
+  }
+
+  sortPalette (palette) {
+    return chain(palette)
+      .keys()
+      .sortBy((swatchName) => sum(palette[swatchName].getRgb()))
+      .map((swatchName) => {
+        return assignIn({}, palette[swatchName], { name: swatchName })
+      })
+      .value();
   }
 
   generateNewPalette () {
@@ -38,7 +48,10 @@ class ColorExtractor extends Component {
     });
 
     vib.getPalette((err, palette) => {
-      this.props.dispatch({ type: 'NEW_PALETTE', payload: palette })
+      this.props.dispatch({
+        type: 'NEW_PALETTE',
+        payload: this.sortPalette(palette)
+      });
     });
   }
 
@@ -50,20 +63,20 @@ class ColorExtractor extends Component {
     }
   }
 
-  renderSwatch (swatchKey) {
-    const colorHex = this.props.palette[swatchKey].getHex(),
+  renderSwatch (swatch) {
+    const colorHex = swatch.getHex(),
           style = assign({}, this.swatchStyle, { backgroundColor: colorHex })
 
-    return <div key={swatchKey} style={style}>{swatchKey}</div>;
+    return <div key={swatch.name} style={style}></div>;
   }
 
   render () {
     if (this.props.palette) {
-      const swatches = keys(this.props.palette).map((swatchKey) => {
-        return this.renderSwatch(swatchKey);
-      })
+      const swatches = chain(this.props.palette)
+        .map((swatch) => this.renderSwatch(swatch))
+        .value();
 
-      return <div id='palette' style={{ marginBottom: '20px' }}>{swatches}</div>
+      return <div id='palette' style={{ margin: '20px 0' }}>{swatches}</div>;
     } else {
       return null;
     }

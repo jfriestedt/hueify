@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Bowser from 'bowser';
-import { assign, get, isEmpty } from 'lodash';
+import { assign, first, get, isEmpty, last } from 'lodash';
 import './App.scss'
 
 import AlbumArt from './components/album_art'
@@ -58,8 +58,8 @@ class App extends Component {
 
 const mapStateToProps = ({ palette }) => {
   return {
-    lightHex: isEmpty(palette) ? null : palette['LightVibrant'].getHex(),
-    darkHex: isEmpty(palette) ? null : palette['DarkVibrant'].getHex()
+    darkHex: isEmpty(palette) ? null : first(palette).getHex(),
+    lightHex: isEmpty(palette) ? null : last(palette).getHex()
   }
 }
 
