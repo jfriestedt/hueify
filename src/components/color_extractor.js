@@ -32,15 +32,21 @@ class ColorExtractor extends Component {
     )
   }
 
-  componentDidUpdate ({ albumArtUrl: prevAlbumArtUrl }) {
-    if (prevAlbumArtUrl !== this.props.albumArtUrl) {
-      const vib = new Vibrant(this.props.albumArtUrl, {
-        filters: []
-      });
+  generateNewPalette () {
+    const vib = new Vibrant(this.props.albumArtUrl, {
+      filters: []
+    });
 
-      vib.getPalette((err, palette) => {
-        this.props.dispatch({ type: 'NEW_PALETTE', payload: palette })
-      });
+    vib.getPalette((err, palette) => {
+      this.props.dispatch({ type: 'NEW_PALETTE', payload: palette })
+    });
+  }
+
+  componentDidUpdate (prevProps) {
+    if (prevProps.albumArtUrl && !this.props.albumArtUrl) {
+      this.props.dispatch({ type: 'NO_PALETTE' })
+    } else if (prevProps.albumArtUrl !== this.props.albumArtUrl) {
+      this.generateNewPalette();
     }
   }
 
