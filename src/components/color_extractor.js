@@ -79,10 +79,10 @@ class ColorExtractor extends Component {
   }
 
   renderPalette (palette, styleBase) {
-    const borderSwatchIdx = (palette.length / 2);
-    const style = assign({}, styleBase, {
-      border: `1px solid ${nth(palette, borderSwatchIdx).getHex()}`
-    });
+    const borderColor = palette.length === 1 ?
+      '#FFFFFF' :
+      nth(palette, (palette.length / 2)).getHex()
+    const style = assign({}, styleBase, { border: `1px solid ${borderColor}` });
     const swatches = chain(palette)
       .map((swatch) => this.renderSwatch(swatch))
       .value();
@@ -91,11 +91,9 @@ class ColorExtractor extends Component {
   }
 
   render () {
-    if (!isEmpty(this.props.palette)) {
-      return this.renderPalette(this.props.palette, this.paletteStyleBase);
-    } else {
-      return null;
-    }
+    return isEmpty(this.props.palette) ?
+      null :
+      this.renderPalette(this.props.palette, this.paletteStyleBase)
   }
 }
 
