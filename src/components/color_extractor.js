@@ -6,7 +6,6 @@ import * as Vibrant from 'node-vibrant'
 class ColorExtractor extends Component {
   constructor () {
     super();
-    this.state = { palette: [] };
     this.swatchStyle = {
       display: 'inline-block',
       width: '50px',
@@ -23,13 +22,13 @@ class ColorExtractor extends Component {
     .join('_')
   }
 
-  shouldComponentUpdate (
-    { albumArtUrl: nextAlbumArtUrl },
-    { palette: nextPalette }
-  ) {
+  shouldComponentUpdate ({
+    albumArtUrl: nextAlbumArtUrl,
+    palette: nextPalette
+  }) {
     return (
       nextAlbumArtUrl !== this.props.albumArtUrl ||
-      (this.getPaletteId(nextPalette) !== this.getPaletteId(this.state.palette))
+      (this.getPaletteId(nextPalette) !== this.getPaletteId(this.props.palette))
     )
   }
 
@@ -40,21 +39,21 @@ class ColorExtractor extends Component {
       });
 
       vib.getPalette((err, palette) => {
-        this.setState({ palette });
+        this.props.dispatch({ type: 'NEW_PALETTE', payload: palette })
       });
     }
   }
 
   renderSwatch (swatchKey) {
-    const colorHex = this.state.palette[swatchKey].getHex(),
+    const colorHex = this.props.palette[swatchKey].getHex(),
           style = assign({}, this.swatchStyle, { backgroundColor: colorHex })
 
     return <div key={swatchKey} style={style}>{swatchKey}</div>;
   }
 
   render () {
-    if (this.state.palette) {
-      const swatches = keys(this.state.palette).map((swatchKey) => {
+    if (this.props.palette) {
+      const swatches = keys(this.props.palette).map((swatchKey) => {
         return this.renderSwatch(swatchKey);
       })
 
@@ -65,14 +64,15 @@ class ColorExtractor extends Component {
   }
 }
 
-const mapStateToProps = ({ spotifyPlayerState }) => {
+const mapStateToProps = ({ spotifyPlayerState, palette }) => {
   const image = chain(spotifyPlayerState)
     .get(['track_window', 'current_track', 'album', 'images'])
     .find({ height: 64 })
     .value();
 
   return {
-    albumArtUrl: image ? image.url : ''
+    albumArtUrl: image ? image.url : '',
+    palette
   }
 }
 

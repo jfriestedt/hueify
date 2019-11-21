@@ -25,12 +25,14 @@ class HueInterface extends Component {
   }
 
   render () {
-    return <div>
-      Philips Hue IPs:
-      {this.props.hueBridgeIps.map((ip) => {
-        return <div key={ip}>{ip}</div>
-      })}
-    </div>
+    return isEmpty(this.props.hueBridgeIps) ?
+      null :
+      <ul style={{ margin: '20px', position: 'absolute' }}>
+        <h6>Philips Hue IPs:</h6>
+        {this.props.hueBridgeIps.map((ip) => {
+          return <li key={ip}>{ip}</li>
+        })}
+      </ul>
   }
 }
 

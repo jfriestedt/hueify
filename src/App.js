@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Bowser from 'bowser';
-import { get } from 'lodash';
+import { assign, get, isEmpty } from 'lodash';
 import './App.scss'
 
 import AlbumArt from './components/album_art'
@@ -16,34 +16,51 @@ class App extends Component {
     super();
     const browserInfo = Bowser.parse(window.navigator.userAgent);
     this.isBrowserSupported = get(browserInfo, ['platform', 'type']) === 'desktop';
-    this.appStyle = {
+
+    this.mainStyleBase = {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       width: '100%',
       height: '100%',
-      position: 'absolute'
+      position: 'absolute',
+      transition: 'background-color 0.5s ease, color 0.5s ease'
     }
   }
 
   render () {
-    return this.isBrowserSupported ?
-      <div className="App" style={this.appStyle}>
-        <LoginPrompt />
+    const mainStyle = assign({}, this.mainStyleBase, {
+      backgroundColor: this.props.darkHex,
+      color: this.props.lightHex,
+    })
 
+    return this.isBrowserSupported ?
+      <div className="App">
         <HueInterface />
-        <AlbumArt />
-        <ColorExtractor />
-        <TrackInfo />
-        <PlayerInterface />
+        <div style={mainStyle}>
+          <LoginPrompt />
+          <AlbumArt />
+          <ColorExtractor />
+          <TrackInfo />
+          <PlayerInterface />
+        </div>
       </div> :
-      <div className="App" style={this.appStyle}>
-        <h4 className='error'>
-          Sorry homie, Hueify only works on Desktop browsers. :'(
-        </h4>
+      <div className="App">
+        <div style={this.mainStyle}>
+          <h4 className='error'>
+            Sorry homie, Hueify only works on Desktop browsers. :'(
+          </h4>
+        </div>
       </div>
   }
 }
 
-export default connect()(App);
+const mapStateToProps = ({ palette }) => {
+  return {
+    lightHex: isEmpty(palette) ? null : palette['LightVibrant'].getHex(),
+    darkHex: isEmpty(palette) ? null : palette['DarkVibrant'].getHex()
+  }
+}
+
+export default connect(mapStateToProps)(App);
