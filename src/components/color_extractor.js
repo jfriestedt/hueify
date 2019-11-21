@@ -11,7 +11,7 @@ class ColorExtractor extends Component {
       width: '300px',
       height: '50px',
       margin: '20px 0',
-      transitionDelay: '400ms'
+      transitionDelay: '900ms'
     };
     this.paletteStyleBase = {
       boxSizing: 'border-box',
