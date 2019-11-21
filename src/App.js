@@ -56,11 +56,16 @@ class App extends Component {
   }
 }
 
+// TODO: Fix up fallback logic
 const mapStateToProps = ({ palette }) => {
-  return {
-    darkHex: isEmpty(palette) ? null : first(palette).getHex(),
-    lightHex: isEmpty(palette) ? null : last(palette).getHex()
+  let darkHex, lightHex;
+  if (!isEmpty(palette)) {
+    darkHex = first(palette).getHex();
+    lightHex = last(palette).getHex();
+    if (darkHex === lightHex) { lightHex = '#FFFFFF' };
   }
+
+  return { darkHex, lightHex }
 }
 
 export default connect(mapStateToProps)(App);

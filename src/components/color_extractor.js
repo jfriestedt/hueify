@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { assign, assignIn, chain, keys, sum } from 'lodash'
+import { assign, assignIn, chain, isEmpty, keys, nth, sum } from 'lodash'
 import * as Vibrant from 'node-vibrant'
 
 class ColorExtractor extends Component {
@@ -8,9 +8,9 @@ class ColorExtractor extends Component {
     super();
     this.swatchStyle = {
       display: 'inline-block',
-      width: '50px',
-      height: '50px',
+      flexGrow: '1',
       fontSize: '6px',
+      height: '100%'
     }
   }
 
@@ -35,10 +35,11 @@ class ColorExtractor extends Component {
   sortPalette (palette) {
     return chain(palette)
       .keys()
-      .sortBy((swatchName) => sum(palette[swatchName].getRgb()))
       .map((swatchName) => {
         return assignIn({}, palette[swatchName], { name: swatchName })
       })
+      .filter((swatch) => swatch.getRgb)
+      .sortBy((swatch) => sum(swatch.getRgb()))
       .value();
   }
 
@@ -71,12 +72,23 @@ class ColorExtractor extends Component {
   }
 
   render () {
-    if (this.props.palette) {
+    if (!isEmpty(this.props.palette)) {
       const swatches = chain(this.props.palette)
         .map((swatch) => this.renderSwatch(swatch))
         .value();
+      const borderSwatchIdx = (this.props.palette.length / 2);
+      const style = {
+        // TODO: what if every swatch is the same color?
+        border: `1px solid ${nth(this.props.palette, borderSwatchIdx).getHex()}`,
+        boxSizing: 'border-box',
+        display: 'flex',
+        height: '50px',
+        lineHeight: '0',
+        margin: '20px 0',
+        width: '300px'
+      };
 
-      return <div id='palette' style={{ margin: '20px 0' }}>{swatches}</div>;
+      return <div id='palette' style={style}>{swatches}</div>;
     } else {
       return null;
     }
