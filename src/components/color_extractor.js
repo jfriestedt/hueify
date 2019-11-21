@@ -1,13 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { assign, assignIn, chain, isEmpty, keys, nth, sum } from 'lodash'
+import { assign, assignIn, chain, isEmpty, nth, sum } from 'lodash'
 import * as Vibrant from 'node-vibrant'
 
 class ColorExtractor extends Component {
   constructor () {
     super();
-    this.swatchStyle = {
-      display: 'inline-block',
+    this.paletteStyleBase = {
+      boxSizing: 'border-box',
+      display: 'flex',
+      height: '50px',
+      lineHeight: '0',
+      margin: '20px 0',
+      width: '300px'
+    }
+    this.swatchStyleBase = {
       flexGrow: '1',
       fontSize: '6px',
       height: '100%'
@@ -22,13 +29,13 @@ class ColorExtractor extends Component {
       .value();
   }
 
-  shouldComponentUpdate ({
-    albumArtUrl: nextAlbumArtUrl,
-    palette: nextPalette
-  }) {
+  shouldComponentUpdate (nextProps) {
     return (
-      nextAlbumArtUrl !== this.props.albumArtUrl ||
-      (this.getPaletteID(nextPalette) !== this.getPaletteID(this.props.palette))
+      nextProps.albumArtUrl !== this.props.albumArtUrl ||
+      (
+        this.getPaletteID(nextProps.palette) !==
+        this.getPaletteID(this.props.palette)
+      )
     )
   }
 
@@ -58,7 +65,7 @@ class ColorExtractor extends Component {
 
   componentDidUpdate (prevProps) {
     if (prevProps.albumArtUrl && !this.props.albumArtUrl) {
-      this.props.dispatch({ type: 'NO_PALETTE' })
+      this.props.dispatch({ type: 'NO_PALETTE' });
     } else if (prevProps.albumArtUrl !== this.props.albumArtUrl) {
       this.generateNewPalette();
     }
@@ -66,29 +73,26 @@ class ColorExtractor extends Component {
 
   renderSwatch (swatch) {
     const colorHex = swatch.getHex(),
-          style = assign({}, this.swatchStyle, { backgroundColor: colorHex })
+          style = assign({}, this.swatchStyleBase, { backgroundColor: colorHex })
 
     return <div key={swatch.name} style={style}></div>;
   }
 
+  renderPalette (palette, styleBase) {
+    const borderSwatchIdx = (palette.length / 2);
+    const style = assign({}, styleBase, {
+      border: `1px solid ${nth(palette, borderSwatchIdx).getHex()}`
+    });
+    const swatches = chain(palette)
+      .map((swatch) => this.renderSwatch(swatch))
+      .value();
+
+    return <div id='palette' style={style}>{swatches}</div>;
+  }
+
   render () {
     if (!isEmpty(this.props.palette)) {
-      const swatches = chain(this.props.palette)
-        .map((swatch) => this.renderSwatch(swatch))
-        .value();
-      const borderSwatchIdx = (this.props.palette.length / 2);
-      const style = {
-        // TODO: what if every swatch is the same color?
-        border: `1px solid ${nth(this.props.palette, borderSwatchIdx).getHex()}`,
-        boxSizing: 'border-box',
-        display: 'flex',
-        height: '50px',
-        lineHeight: '0',
-        margin: '20px 0',
-        width: '300px'
-      };
-
-      return <div id='palette' style={style}>{swatches}</div>;
+      return this.renderPalette(this.props.palette, this.paletteStyleBase);
     } else {
       return null;
     }
