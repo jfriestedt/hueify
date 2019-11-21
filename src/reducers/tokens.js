@@ -1,9 +1,9 @@
-import { assign, pick } from 'lodash';
+import { assign } from 'lodash';
 
-export default (state = {}, action) => {
-  switch (action.type) {
+export default (state = {}, { type, payload }) => {
+  switch (type) {
     case 'REGISTER_TOKENS':
-      return assign({}, state, pick(action, 'refreshToken'));
+      return assign({}, state, { refreshToken: payload });
     default:
       return state;
   }

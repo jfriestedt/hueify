@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { CSSTransition } from 'react-transition-group';
-import registerTokens from '../actions/tokens';
 import '../App.scss'
 
 class PlayerInterface extends Component {
@@ -75,7 +74,7 @@ class PlayerInterface extends Component {
     const urlParams = new URLSearchParams(window.location.search),
           refreshToken = urlParams.get('refresh_token');
     if (refreshToken) {
-      this.props.dispatch(registerTokens({ refreshToken }))
+      this.props.dispatch({ type: 'REGISTER_TOKENS', payload: refreshToken })
     }
   }
 
