@@ -31,11 +31,12 @@ class App extends Component {
     return this.isBrowserSupported ?
       <div className="App" style={this.appStyle}>
         <LoginPrompt />
-        <TrackInfo />
-        <ColorExtractor />
-        <AlbumArt />
-        <PlayerInterface />
+
         <HueInterface />
+        <AlbumArt />
+        <ColorExtractor />
+        <TrackInfo />
+        <PlayerInterface />
       </div> :
       <div className="App" style={this.appStyle}>
         <h4 className='error'>

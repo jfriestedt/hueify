@@ -5,8 +5,8 @@ import { get } from 'lodash';
 const TrackInfo = ({ title, artist }) => {
   return (title && artist) ?
     <div id='track-info' style={{ width: '300px' }}>
-      <h2>{title}</h2>
-      <h3>{artist}</h3>
+      <h4>{title}</h4>
+      <h5>{artist}</h5>
     </div> :
     null
 }

@@ -10,8 +10,7 @@ const AlbumArt = ({ albumArtUrl }) => {
          width='300'
          decoding='sync'
          style={{ height: '300px',
-                  width: '300px',
-                  marginBottom: '20px' }} /> :
+                  width: '300px' }} /> :
     null
 }
 
