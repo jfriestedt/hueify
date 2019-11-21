@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { chain, get } from 'lodash';
 
-const TrackInfo = ({ title, artist }) => {
-  return (title && artist) ?
+const TrackInfo = ({ title, artists }) => {
+  return (title && artists) ?
     <div id='track-info' style={{ width: '300px' }}>
-      <h4>{title}</h4>
-      <h5>{artist}</h5>
+      <h5><strong>{title}</strong></h5>
+      <h6 style={{ fontSize: '14px' }}>{artists}</h6>
     </div> :
     null
 }
@@ -19,7 +19,10 @@ const mapStateToProps = ({ spotifyPlayerState }) => {
 
   return {
     title: get(currentTrack, 'name'),
-    artist: get(currentTrack, ['artists', 0, 'name'])
+    artists: chain(get(currentTrack, 'artists') || [])
+      .map('name')
+      .join(', ')
+      .value()
   }
 }
 

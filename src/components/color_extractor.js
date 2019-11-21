@@ -17,7 +17,8 @@ class ColorExtractor extends Component {
     this.swatchStyleBase = {
       flexGrow: '1',
       fontSize: '6px',
-      height: '100%'
+      height: '100%',
+      transition: 'background-color 0.5s ease'
     }
   }
 
@@ -100,7 +101,7 @@ class ColorExtractor extends Component {
 const mapStateToProps = ({ spotifyPlayerState, palette }) => {
   const image = chain(spotifyPlayerState)
     .get(['track_window', 'current_track', 'album', 'images'])
-    .find({ height: 64 })
+    .find({ width: 64 })
     .value();
 
   return {
