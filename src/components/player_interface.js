@@ -133,7 +133,7 @@ class PlayerInterface extends Component {
   }
 
   render () {
-    return <div>
+    return <div style={{ position: 'absolute' }}>
       <Helmet>
         <script src="https://sdk.scdn.co/spotify-player.js"></script>
       </Helmet>

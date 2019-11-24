@@ -10,14 +10,18 @@ const AlbumArt = ({ albumArtUrl, glowColor }) => {
     width: '300px'
   }
 
-  return albumArtUrl ?
-    <img alt='album art'
-         src={albumArtUrl}
-         height='300'
-         width='300'
-         decoding='sync'
-         style={assign({}, styleBase, {})} /> :
-    null
+  return <div style={{ height: '300px',
+                       opacity: albumArtUrl ? 1 : 0,
+                       transition: 'opacity 200ms ease',
+                       transitionDelay: '300ms',
+                       width: '300px' }}>
+    {albumArtUrl && <img alt='album art'
+                         src={albumArtUrl}
+                         height='300'
+                         width='300'
+                         decoding='sync'
+                         style={assign({}, styleBase, {})} />}
+  </div>
 }
 
 const mapStateToProps = ({ spotifyPlayerState, palette }) => {

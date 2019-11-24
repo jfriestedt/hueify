@@ -2,9 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 const LoginPrompt = ({ loggedIn }) => {
+  const style = {
+    position: 'absolute',
+    zIndex: 1
+  }
+
   return loggedIn
     ? null
-    : <a className='button' href='/login'>Log in to Spotify</a>
+    : <a href='/login' className='button' style={style}>
+        Log in to Spotify
+      </a>
 }
 
 const mapStateToProps = (state) => {

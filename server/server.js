@@ -89,16 +89,21 @@ app.get('/callback', function(req, res) {
     };
 
     request.post(authOptions, function(error, response, body) {
+      const redirectHost = (
+        process.env.REACT_APP_REDIRECT_HOST ||
+        process.env.REACT_APP_HOST
+      );
+
       if (!error && response.statusCode === 200) {
 
         const { refresh_token } = body;
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect(`${process.env.REACT_APP_HOST}?` + querystring.stringify({
+        res.redirect(`${redirectHost}?` + querystring.stringify({
           refresh_token
         }));
       } else {
-        res.redirect(`${process.env.REACT_APP_HOST}?` + querystring.stringify({
+        res.redirect(`${redirectHost}?` + querystring.stringify({
           error: 'invalid_token'
         }));
       }

@@ -3,12 +3,17 @@ import { connect } from 'react-redux';
 import { chain, get } from 'lodash';
 
 const TrackInfo = ({ title, artists }) => {
-  return (title && artists) ?
-    <div id='track-info' style={{ width: '300px' }}>
-      <h5><strong>{title}</strong></h5>
-      <h6 style={{ fontSize: '14px' }}>{artists}</h6>
-    </div> :
-    null
+  return <div id='track-info' style={{
+    opacity: (title && artists) ? 1 : 0,
+    transition: 'opacity 200ms ease',
+    transitionDelay: '500ms',
+    width: '300px',
+  }}>
+    <h5><strong>{title ? title : ''}</strong></h5>
+    <h6 style={{ fontSize: '14px' }}>
+      {artists ? artists : ''}
+    </h6>
+  </div>
 }
 
 const mapStateToProps = ({ spotifyPlayerState }) => {

@@ -25,7 +25,7 @@ class App extends Component {
       width: '100%',
       height: '100%',
       position: 'absolute',
-      transition: 'background-color 0.5s ease, color 0.5s ease'
+      transition: 'background-color 200ms ease, color 200ms ease'
     }
   }
 

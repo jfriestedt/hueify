@@ -6,13 +6,16 @@ import * as Vibrant from 'node-vibrant'
 class ColorExtractor extends Component {
   constructor () {
     super();
+    this.paletteContainerStyleBase = {
+      height: '50px',
+      margin: '20px 0',
+      width: '300px',
+    }
     this.paletteStyleBase = {
       boxSizing: 'border-box',
       display: 'flex',
-      height: '50px',
-      lineHeight: '0',
-      margin: '20px 0',
-      width: '300px'
+      height: '100%',
+      lineHeight: '0'
     }
     this.swatchStyleBase = {
       flexGrow: '1',
@@ -92,9 +95,16 @@ class ColorExtractor extends Component {
   }
 
   render () {
-    return isEmpty(this.props.palette) ?
-      null :
-      this.renderPalette(this.props.palette, this.paletteStyleBase)
+    return <div style={assign({}, this.paletteContainerStyleBase, {
+      opacity: isEmpty(this.props.palette) ? 0 : 1,
+      transition: 'opacity 200ms ease',
+      transitionDelay: '400ms'
+    })}>
+      {!isEmpty(this.props.palette) && this.renderPalette(
+        this.props.palette,
+        this.paletteStyleBase
+      )}
+    </div>
   }
 }
 
