@@ -16,25 +16,26 @@ class App extends Component {
   constructor () {
     super();
     const browserInfo = Bowser.parse(window.navigator.userAgent);
-    this.isBrowserSupported = get(browserInfo, ['platform', 'type']) === 'desktop';
+    this.isBrowserSupported =
+      get(browserInfo, ['platform', 'type']) === 'desktop';
 
     this.mainStyleBase = {
+      alignItems: 'center',
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: '100%',
       height: '100%',
+      justifyContent: 'center',
       position: 'absolute',
       transition: 'background-color 200ms ease, color 200ms ease',
+      width: '100%',
       zIndex: -2
     }
   }
 
   render () {
     const mainStyle = assign({}, this.mainStyleBase, {
-      backgroundColor: this.props.maskHex,
-      color: this.props.lightHex,
+      backgroundColor: this.props.bgHex,
+      color: this.props.textHex,
     })
 
     return this.isBrowserSupported ?
@@ -61,15 +62,13 @@ class App extends Component {
 
 // TODO: Fix up fallback logic
 const mapStateToProps = ({ palette }) => {
-  let darkHex, lightHex, maskHex;
+  let textHex, bgHex;
   if (!isEmpty(palette)) {
-    darkHex = first(palette).getHex();
-    maskHex = nth(palette, 1).getHex();
-    lightHex = last(palette).getHex();
-    if (maskHex === lightHex) { lightHex = '#FFFFFF' };
+    bgHex = nth(palette, 1).getHex();
+    textHex = palette.length === 1 ? '#FFFFFF' : last(palette).getHex();
   }
 
-  return { darkHex, lightHex, maskHex }
+  return { bgHex, textHex }
 }
 
 export default connect(mapStateToProps)(App);
