@@ -3,24 +3,18 @@ import { connect } from 'react-redux';
 import { assign, chain, nth } from 'lodash';
 
 const AlbumArt = ({ albumArtUrl, glowColor }) => {
-  const styleBase = {
-    boxShadow: `0 0 100px ${glowColor}`,
-    height: '300px',
-    transition: 'box-shadow 0.5s ease',
-    width: '300px'
-  }
-
-  return <div style={{ height: '300px',
+  return <div style={{ boxShadow: `0 0 100px ${glowColor}`,
+                       height: '300px',
                        opacity: albumArtUrl ? 1 : 0,
-                       transition: 'opacity 200ms ease',
-                       transitionDelay: '300ms',
+                       transition: 'box-shadow 200ms ease, opacity 200ms ease',
+                       transitionDelay: '0ms, 300ms',
+                       transitionProperty: 'box-shadow, opacity',
                        width: '300px' }}>
     {albumArtUrl && <img alt='album art'
                          src={albumArtUrl}
                          height='300'
                          width='300'
-                         decoding='sync'
-                         style={assign({}, styleBase, {})} />}
+                         decoding='sync' />}
   </div>
 }
 
