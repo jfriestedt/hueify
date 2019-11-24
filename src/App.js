@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Bowser from 'bowser';
-import { assign, first, get, isEmpty, last } from 'lodash';
+import { assign, first, get, isEmpty, last, nth } from 'lodash';
 import './App.scss'
 
 import AlbumArt from './components/album_art'
@@ -10,6 +10,7 @@ import LoginPrompt from './components/login'
 import PlayerInterface from './components/player_interface'
 import HueInterface from './components/hue_interface'
 import TrackInfo from './components/track_info'
+import GradientMask from './components/gradient_mask'
 
 class App extends Component {
   constructor () {
@@ -25,13 +26,14 @@ class App extends Component {
       width: '100%',
       height: '100%',
       position: 'absolute',
-      transition: 'background-color 200ms ease, color 200ms ease'
+      transition: 'background-color 200ms ease, color 200ms ease',
+      zIndex: -2
     }
   }
 
   render () {
     const mainStyle = assign({}, this.mainStyleBase, {
-      backgroundColor: this.props.darkHex,
+      backgroundColor: this.props.maskHex,
       color: this.props.lightHex,
     })
 
@@ -44,6 +46,7 @@ class App extends Component {
           <ColorExtractor />
           <TrackInfo />
           <PlayerInterface />
+          <GradientMask />
         </div>
       </div> :
       <div className="App">
@@ -58,14 +61,15 @@ class App extends Component {
 
 // TODO: Fix up fallback logic
 const mapStateToProps = ({ palette }) => {
-  let darkHex, lightHex;
+  let darkHex, lightHex, maskHex;
   if (!isEmpty(palette)) {
     darkHex = first(palette).getHex();
+    maskHex = nth(palette, 1).getHex();
     lightHex = last(palette).getHex();
-    if (darkHex === lightHex) { lightHex = '#FFFFFF' };
+    if (maskHex === lightHex) { lightHex = '#FFFFFF' };
   }
 
-  return { darkHex, lightHex }
+  return { darkHex, lightHex, maskHex }
 }
 
 export default connect(mapStateToProps)(App);

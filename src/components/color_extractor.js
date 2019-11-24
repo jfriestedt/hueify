@@ -1,20 +1,24 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { assign, assignIn, chain, isEmpty, nth, sum } from 'lodash'
+import { assign, assignIn, chain, first, isEmpty, last, nth, sum } from 'lodash'
 import * as Vibrant from 'node-vibrant'
 
 class ColorExtractor extends Component {
-  constructor () {
+  constructor ({ palette }) {
     super();
     this.paletteContainerStyleBase = {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       height: '50px',
       margin: '20px 0',
-      width: '300px',
+      width: '300px'
     }
     this.paletteStyleBase = {
       boxSizing: 'border-box',
       display: 'flex',
-      height: '100%',
+      height: 'calc(100% - 2px)',
+      width: 'calc(100% - 2px)',
       lineHeight: '0'
     }
     this.swatchStyleBase = {
@@ -86,16 +90,16 @@ class ColorExtractor extends Component {
     const borderColor = palette.length === 1 ?
       '#FFFFFF' :
       nth(palette, (palette.length / 2)).getHex()
-    const style = assign({}, styleBase, { border: `1px solid ${borderColor}` });
     const swatches = chain(palette)
       .map((swatch) => this.renderSwatch(swatch))
       .value();
 
-    return <div id='palette' style={style}>{swatches}</div>;
+    return <div id='palette' style={styleBase}>{swatches}</div>;
   }
 
   render () {
     return <div style={assign({}, this.paletteContainerStyleBase, {
+      background: !isEmpty(this.props.palette) && `linear-gradient(to right, ${nth(this.props.palette, 3).getHex()}, ${nth(this.props.palette, 2).getHex()})`,
       opacity: isEmpty(this.props.palette) ? 0 : 1,
       transition: 'opacity 200ms ease',
       transitionDelay: '400ms'
