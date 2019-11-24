@@ -1,16 +1,17 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import Bowser from 'bowser';
 import { assign, first, get, isEmpty, last, nth } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import './App.scss'
 
 import AlbumArt from './components/album_art'
 import ColorExtractor from './components/color_extractor'
+import GradientMask from './components/gradient_mask'
+import HueInterface from './components/hue_interface'
 import LoginPrompt from './components/login_prompt'
 import PlayerInterface from './components/player_interface'
-import HueInterface from './components/hue_interface'
 import TrackInfo from './components/track_info'
-import GradientMask from './components/gradient_mask'
 
 class App extends Component {
   constructor () {
