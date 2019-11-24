@@ -1,15 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { assign, chain, nth } from 'lodash';
+import { chain, nth } from 'lodash';
 
 const AlbumArt = ({ albumArtUrl, glowColor }) => {
-  return <div style={{ boxShadow: `0 0 100px ${glowColor}`,
-                       height: '300px',
-                       opacity: albumArtUrl ? 1 : 0,
-                       transition: 'box-shadow 200ms ease, opacity 200ms ease',
-                       transitionDelay: '0ms, 300ms',
-                       transitionProperty: 'box-shadow, opacity',
-                       width: '300px' }}>
+  const style = {
+    boxShadow: `0 0 100px ${glowColor}`,
+    height: '300px',
+    opacity: albumArtUrl ? 1 : 0,
+    transition: 'box-shadow 200ms ease 0ms, opacity 200ms ease 300ms',
+    width: '300px'
+  }
+
+  return <div style={style}>
     {albumArtUrl && <img alt='album art'
                          src={albumArtUrl}
                          height='300'
@@ -21,16 +23,16 @@ const AlbumArt = ({ albumArtUrl, glowColor }) => {
 const mapStateToProps = ({ spotifyPlayerState, palette }) => {
   const image = chain(spotifyPlayerState)
     .get(['track_window', 'current_track', 'album', 'images'])
-    .find({ width: 300 })
+    .sortBy((image) => Math.abs(image.width - 300))
+    .first()
     .value();
 
   return {
-    albumArtUrl: image ? image.url : '',
-    glowColor: palette ?
-      palette.length > 1 ?
-        nth(palette, ((palette.length / 2) - 1)).getHex() :
-        '#FFFFFF' :
-      null
+    albumArtUrl: (image && image.url) || '',
+    glowColor: (
+      palette && palette.length > 1 &&
+      nth(palette, ((palette.length / 2) - 1)).getHex()
+    ) || '#FFFFFF'
   }
 }
 
