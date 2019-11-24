@@ -6,7 +6,7 @@ import './App.scss'
 
 import AlbumArt from './components/album_art'
 import ColorExtractor from './components/color_extractor'
-import LoginPrompt from './components/login'
+import LoginPrompt from './components/login_prompt'
 import PlayerInterface from './components/player_interface'
 import HueInterface from './components/hue_interface'
 import TrackInfo from './components/track_info'

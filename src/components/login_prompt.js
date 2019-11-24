@@ -7,11 +7,9 @@ const LoginPrompt = ({ loggedIn }) => {
     zIndex: 1
   }
 
-  return loggedIn
-    ? null
-    : <a href='/login' className='button' style={style}>
-        Log in to Spotify
-      </a>
+  return !loggedIn && <a href='/login' className='button' style={style}>
+    Log in to Spotify
+  </a>
 }
 
 const mapStateToProps = (state) => {
