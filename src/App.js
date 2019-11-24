@@ -33,35 +33,43 @@ class App extends Component {
     }
   }
 
-  render () {
-    const mainStyle = assign({}, this.mainStyleBase, {
-      backgroundColor: this.props.bgHex,
-      color: this.props.textHex,
-    })
+  renderBrowserNotSupported () {
+    return <div style={this.mainStyle}>
+      <h4 className='error'>
+        Sorry homie, Hueify only works on Desktop browsers. :'(
+      </h4>
+    </div>
+  }
 
-    return this.isBrowserSupported ?
-      <div className="App">
-        <HueInterface />
-        <div style={mainStyle}>
-          <LoginPrompt />
-          <AlbumArt />
-          <ColorExtractor />
-          <TrackInfo />
-          <PlayerInterface />
-          <GradientMask />
-        </div>
-      </div> :
-      <div className="App">
-        <div style={this.mainStyle}>
-          <h4 className='error'>
-            Sorry homie, Hueify only works on Desktop browsers. :'(
-          </h4>
-        </div>
+  renderApp () {
+    const { bgHex, textHex } = this.props,
+          style = assign({}, this.mainStyleBase, {
+      backgroundColor: bgHex,
+      color: textHex
+    });
+
+    return <div>
+      <HueInterface />
+      <div style={style}>
+        <LoginPrompt />
+        <AlbumArt />
+        <ColorExtractor />
+        <TrackInfo />
+        <PlayerInterface />
+        <GradientMask />
       </div>
+    </div>
+  }
+
+  render () {
+    return <div className='App'>
+      {this.isBrowserSupported ?
+        this.renderApp() :
+        this.renderBrowserNotSupported()}
+    </div>
   }
 }
 
-// TODO: Fix up fallback logic
 const mapStateToProps = ({ palette }) => {
   let textHex, bgHex;
   if (!isEmpty(palette)) {
