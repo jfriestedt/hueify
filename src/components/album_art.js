@@ -7,7 +7,7 @@ const AlbumArt = ({ albumArtUrl, glowColor }) => {
     boxShadow: `0 0 100px ${glowColor}`,
     height: '300px',
     opacity: albumArtUrl ? 1 : 0,
-    transition: 'box-shadow 200ms ease 0ms, opacity 200ms ease 300ms',
+    transition: 'box-shadow 200ms ease, opacity 200ms ease 300ms',
     width: '300px'
   }
 
@@ -23,6 +23,7 @@ const AlbumArt = ({ albumArtUrl, glowColor }) => {
 const mapStateToProps = ({ spotifyPlayerState, palette }) => {
   const image = chain(spotifyPlayerState)
     .get(['track_window', 'current_track', 'album', 'images'])
+    // TODO: Abstract this to a helper fn
     .sortBy((image) => Math.abs(image.width - 300))
     .first()
     .value();

@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { assign, assignIn, chain, first, isEmpty, last, nth, sum } from 'lodash'
+import { assign, assignIn, chain, isEmpty, nth, sum } from 'lodash'
 import * as Vibrant from 'node-vibrant'
+
+// TODO: color extraction should be handled by middleware. This component
+// should just be palette rendering.
 
 class ColorExtractor extends Component {
   constructor ({ palette }) {
@@ -12,6 +15,7 @@ class ColorExtractor extends Component {
       justifyContent: 'center',
       height: '50px',
       margin: '20px 0',
+      transition: 'opacity 200ms ease 400ms',
       width: '300px'
     }
     this.paletteStyleBase = {
@@ -25,7 +29,7 @@ class ColorExtractor extends Component {
       flexGrow: '1',
       fontSize: '6px',
       height: '100%',
-      transition: 'background-color 0.5s ease'
+      transition: 'background-color 200ms ease'
     }
   }
 
@@ -87,9 +91,6 @@ class ColorExtractor extends Component {
   }
 
   renderPalette (palette, styleBase) {
-    const borderColor = palette.length === 1 ?
-      '#FFFFFF' :
-      nth(palette, (palette.length / 2)).getHex()
     const swatches = chain(palette)
       .map((swatch) => this.renderSwatch(swatch))
       .value();
@@ -98,12 +99,20 @@ class ColorExtractor extends Component {
   }
 
   render () {
-    return <div style={assign({}, this.paletteContainerStyleBase, {
-      background: !isEmpty(this.props.palette) && `linear-gradient(to right, ${nth(this.props.palette, 3).getHex()}, ${nth(this.props.palette, 2).getHex()})`,
+    let background, borderLightHex, borderDarkHex;
+    if (!isEmpty(this.props.palette)) {
+      // TODO: what about for palettes with less than 6 swatches?
+      borderLightHex = nth(this.props.palette, 3).getHex();
+      borderDarkHex = nth(this.props.palette, 2).getHex();
+      background =
+        `linear-gradient(to right, ${borderLightHex}, ${borderDarkHex})`
+    }
+    const style = assign({}, this.paletteContainerStyleBase, {
+      background,
       opacity: isEmpty(this.props.palette) ? 0 : 1,
-      transition: 'opacity 200ms ease',
-      transitionDelay: '400ms'
-    })}>
+    })
+
+    return <div style={style}>
       {!isEmpty(this.props.palette) && this.renderPalette(
         this.props.palette,
         this.paletteStyleBase
@@ -115,7 +124,9 @@ class ColorExtractor extends Component {
 const mapStateToProps = ({ spotifyPlayerState, palette }) => {
   const image = chain(spotifyPlayerState)
     .get(['track_window', 'current_track', 'album', 'images'])
-    .find({ width: 64 })
+    // TODO: Abstract this to a helper fn
+    .sortBy((image) => Math.abs(image.width - 64))
+    .first()
     .value();
 
   return {
