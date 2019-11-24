@@ -7,7 +7,7 @@ const AlbumArt = ({ albumArtUrl, glowColor, spotifyPlayerMounted }) => {
   const containerStyle = {
     boxShadow: `0 0 100px ${glowColor}`,
     height: '300px',
-    transitionDelay: '600ms',
+    transitionDelay: '200ms',
     width: '300px'
   }
   const imgStyle = {

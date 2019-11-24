@@ -9,7 +9,7 @@ const TrackInfo = ({ title, artists }) => {
                         timeout={200}
                         classNames='fade'
                         unmountOnExit >
-    <div id='track-info' style={{ transitionDelay: '1200ms', width: '300px' }}>
+    <div id='track-info' style={{ transitionDelay: '600ms', width: '300px' }}>
       <h5><strong>{title}</strong></h5>
       <h6 style={{ fontSize: '14px' }}>{artists}</h6>
     </div>
