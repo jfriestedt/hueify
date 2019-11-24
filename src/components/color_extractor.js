@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { CSSTransition } from 'react-transition-group';
 import { connect } from 'react-redux';
 import { assign, assignIn, chain, isEmpty, nth, sum } from 'lodash'
 import * as Vibrant from 'node-vibrant'
@@ -7,24 +6,20 @@ import * as Vibrant from 'node-vibrant'
 class ColorExtractor extends Component {
   constructor () {
     super();
-    this.containerStyle = {
-      width: '300px',
-      height: '50px',
-      margin: '20px 0',
-      transitionDelay: '400ms'
-    };
     this.paletteStyleBase = {
       boxSizing: 'border-box',
       display: 'flex',
-      height: '100%',
-      lineHeight: '0'
-    };
+      height: '50px',
+      lineHeight: '0',
+      margin: '20px 0',
+      width: '300px'
+    }
     this.swatchStyleBase = {
       flexGrow: '1',
       fontSize: '6px',
       height: '100%',
       transition: 'background-color 0.5s ease'
-    };
+    }
   }
 
   getPaletteID (palette) {
@@ -97,17 +92,9 @@ class ColorExtractor extends Component {
   }
 
   render () {
-    return <CSSTransition in={!!this.props.albumArtUrl}
-                          exit={false}
-                          timeout={200}
-                          classNames='fade'
-                          unmountOnExit >
-      <div style={this.containerStyle}>
-        {isEmpty(this.props.palette) ?
-          null :
-          this.renderPalette(this.props.palette, this.paletteStyleBase)}
-      </div>
-    </CSSTransition>
+    return isEmpty(this.props.palette) ?
+      null :
+      this.renderPalette(this.props.palette, this.paletteStyleBase)
   }
 }
 

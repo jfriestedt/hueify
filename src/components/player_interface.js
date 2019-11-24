@@ -101,7 +101,7 @@ class PlayerInterface extends Component {
       return <CSSTransition in={loading}
                             exit={false}
                             timeout={200}
-                            classNames='fade'
+                            classNames='device-info'
                             unmountOnExit >
         <div>
           <h4>Connecting to Spotify</h4>
@@ -124,7 +124,7 @@ class PlayerInterface extends Component {
   renderDeviceInfo () {
     return <CSSTransition in={this.props.spotifyPlayerMounted}
                           timeout={200}
-                          classNames='fade'
+                          classNames='device-info'
                           unmountOnExit >
         <div>
           {this.renderConnectPrompt()}

@@ -10,27 +10,27 @@ h1, h2, h3, h4, h5, h6, p, ul, li, div {
   color: red
 }
 
-.fade-enter {
+.device-info-enter {
   opacity: 0;
   transform: scale(0.9);
 }
 
-.fade-enter-active {
+.device-info-enter-active {
   opacity: 1;
   transform: translateX(0);
   transition: opacity 300ms, transform 300ms;
 }
 
-.fade-exit {
+.device-info-exit {
   opacity: 1;
 }
 
-.fade-exit-active {
+.device-info-exit-active {
   opacity: 0;
   transform: scale(0.9);
   transition: opacity 300ms, transform 300ms;
 }
 
-.fade-exit-done {
+.device-info-exit-done {
   opacity: 0;
 }
